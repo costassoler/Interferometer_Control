@@ -64,32 +64,32 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
     ifm = ugradio.interf.Interferometer()
     hpm = ugradio.hp_multi.HP_Multimeter()
     i = 0
-    dt = 1
     
-    AltAz = ugradio.coord.get_altaz(Ra,Dec)
+    RAdecp = ugradio.coord.precess(Ra,Dec)
+    AltAz = ugradio.coord.get_altaz(RAdecp[0], RAdecp[1])
     alt = AltAz[0]
     az = AltAz[1]
     ifm.point(alt,az)
     time.sleep(60)
-    hpm.start_recording(dt)
+    hpm.start_recording(inter)
     while True:
         try:
             i+=1
-            AltAz = ugradio.coord.get_altaz(Ra,Dec)
+            RAdecp = ugradio.coord.precess(Ra,Dec)
+            AltAz = ugradio.coord.get_altaz(RAdecp[0], RAdecp[1])
             alt = AltAz[0]
             az = AltAz[1]
             ifm.point(alt,az) 
-            if i%10 == 0:
+            if (i%10 == 0):
                 intermediate_data = hpm.get_recording_data()
                 np.savez(data_file_name + str(i) + '.npz', volts = intermediate_data[0], time = intermediate_data[1]) 
             if(i*60>dur):
                 data = hpm.get_recording_data()
                 np.savez(data_file_name+'.npz',volts = data[0], time = data[1])
-                ifm.stow()
                 break
             time.sleep(60)
         except:
-            print('an error occurred but at least your data was saved!')
+            print('an error occurred but at least your data was saved! yeet')
         finally:
             final_data = hpm.get_recording_data()
             np.savez(data_file_name + 'final.npz', volts=final_data[0], time=final_data[1])
