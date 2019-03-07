@@ -79,10 +79,13 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
             alt = AltAz[0]
             az = AltAz[1]
             ifm.point(alt,az) 
+            if i%10 == 0:
+                intermediate_data = hpm.get_recording_data()
+                np.savez(data_file_name + str(i) + '.npz', volts = intermediate_data[0], time = intermediate_data[1]) 
             if(i*60>dur):
                 hpm.end_recording()
                 data = hpm.get_recording_data()
-                np.savez(data_file_name+'.npz',data=data)
+                np.savez(data_file_name+'.npz',volts = data[0], time = data[1])
                 ifm.stow()
                 break
             time.sleep(60)
@@ -92,10 +95,7 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
             np.savez(data_file_name+'.npz',data=data)
             ifm.stow()
             print('an error occurred but at least your data was saved!')
-        finally:
-            finaldata = hpm.get_recording_data()
-            np.savez(data_file_name+'final.npz', data=data)
-            ifm.stow()
+ 
 
 
 
