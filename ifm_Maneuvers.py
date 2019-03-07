@@ -92,7 +92,10 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
             np.savez(data_file_name+'.npz',data=data)
             ifm.stow()
             print('an error occurred but at least your data was saved!')
- 
+        finally:
+            finaldata = hpm.get_recording_data()
+            np.savez(data_file_name+'final.npz', data=data)
+            ifm.stow()
 
 
 
