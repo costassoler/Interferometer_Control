@@ -72,8 +72,9 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
     ifm.point(alt,az)
     time.sleep(60)
     hpm.start_recording(inter)
-    while True:
-        try:
+    try:
+        while True:
+        
             i+=1
             RAdecp = ugradio.coord.precess(Ra,Dec)
             AltAz = ugradio.coord.get_altaz(RAdecp[0], RAdecp[1])
@@ -88,13 +89,13 @@ def observation_run(Ra,Dec,dur,inter,data_file_name):
                 np.savez(data_file_name+'.npz',volts = data[0], time = data[1])
                 break
             time.sleep(60)
-        except:
-            print('an error occurred but at least your data was saved! yeet')
-        finally:
-            final_data = hpm.get_recording_data()
-            np.savez(data_file_name + 'final.npz', volts=final_data[0], time=final_data[1])
-            hpm.end_recording()
-            ifm.stow()
+    except:
+        print('an error occurred but at least your data was saved! yeet')
+    finally:
+        final_data = hpm.get_recording_data()
+        np.savez(data_file_name + 'final.npz', volts=final_data[0], time=final_data[1])
+        hpm.end_recording()
+        ifm.stow()
 
  
 
